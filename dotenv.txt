@@ -1,0 +1,4 @@
+MONGO_URL = Mongodb url,
+SECRET_KEY = Secret key for jwt,
+URL = you server url,
+DATABASE_NAME = database name 
