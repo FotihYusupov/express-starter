@@ -1,6 +1,6 @@
 const { exec } = require('child_process');
 
-const databaseName = 'instagram';
+const databaseName = process.env.DATABASE_NAME;
 const backupDirectory = './';
 
 const backupCommand = `mongodump --db ${databaseName} --out ${backupDirectory}`;
@@ -14,7 +14,6 @@ exports.getBackup = () => {
         }
     });
 }
-
 
 // const { exec } = require('child_process');
 // const fs = require('fs');
