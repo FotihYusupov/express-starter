@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
     }
     return res.json({
       data: {
-        token: sign(findUser._id),
+        token: sign(findUser._id.toString()),
         login: findUser.login,
       },
     });

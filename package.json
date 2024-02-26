@@ -16,9 +16,9 @@
     "webpack-cli": "^5.1.4",
     "webpack-node-externals": "^3.0.0"
   },
-  "name": "express",
+  "name": "hypernova-starter",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
@@ -26,7 +26,7 @@
     "prod": "node ./dist/bundle.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "author": "Fotih Yusupov",
+  "license": "MIT",
+  "description": "Express starter"
 }
