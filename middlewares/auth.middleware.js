@@ -1,9 +1,9 @@
-const { verify } = require('../utils/jwt');
+const { verify } = require("../utils/jwt");
 
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (authHeader) {
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(" ")[1];
     if (token) {
       const userId = verify(token);
       if (userId) {
@@ -12,7 +12,7 @@ function authMiddleware(req, res, next) {
       }
     }
   } else {
-    res.status(401).json('Token is not defined');
+    res.status(401).json("Token is not defined");
   }
 }
 

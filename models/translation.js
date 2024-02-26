@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose");
 const TranslationSchema = new mongoose.Schema({
   message: {
     type: String,
@@ -18,6 +17,5 @@ const TranslationSchema = new mongoose.Schema({
   },
 });
 
-const Translations = mongoose.model('translations', TranslationSchema);
-
+const Translations = mongoose.model("translations", TranslationSchema);
 module.exports = Translations;

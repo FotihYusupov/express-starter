@@ -1,4 +1,4 @@
-const Translations = require('../models/translation')
+const Translations = require("../models/translation");
 
 exports.getAll = async (req, res) => {
   try {
@@ -14,45 +14,47 @@ exports.getAll = async (req, res) => {
       })),
     });
   } catch (err) {
-    return res.json(err)
+    return res.json(err);
   }
-}
+};
 
 exports.findByLang = async (req, res) => {
   try {
     const { lang } = req.params;
     const translations = await Translations.find();
-      const obj = {};
-      const result = [];
-      translations.forEach((translation) => {
-        obj[translation.message] = translation[lang] || null;
-      });
-      result.push(obj);
-      return res.json(result[0]);
+    const obj = {};
+    const result = [];
+    translations.forEach((translation) => {
+      obj[translation.message] = translation[lang] || null;
+    });
+    result.push(obj);
+    return res.json(result[0]);
   } catch (err) {
-    return res.json(err)
+    return res.json(err);
   }
-}
+};
 
 exports.search = async (req, res) => {
   try {
     const { message } = req.params;
-    const regex = new RegExp(message, 'i');
+    const regex = new RegExp(message, "i");
     const translations = await Translations.find({
       message: { $regex: regex },
     });
-    return res.json(translations.map(translation => ({
-      id: translation._id,
-      message: translation.message,
-      uz: translation.uz ? translation.uz : null,
-      ru: translation.ru ? translation.ru : null,
-      en: translation.en ? translation.en : null,
-      kr: translation.kr ? translation.kr : null,
-    })));
+    return res.json(
+      translations.map((translation) => ({
+        id: translation._id,
+        message: translation.message,
+        uz: translation.uz ? translation.uz : null,
+        ru: translation.ru ? translation.ru : null,
+        en: translation.en ? translation.en : null,
+        kr: translation.kr ? translation.kr : null,
+      }))
+    );
   } catch (err) {
-    return res.json(err)
+    return res.json(err);
   }
-}
+};
 
 exports.create = async (req, res) => {
   try {
@@ -79,19 +81,18 @@ exports.create = async (req, res) => {
   }
 };
 
-
 exports.update = async (req, res) => {
   try {
     const { lang, translation } = req.body;
     const { id } = req.params;
     const findTranslation = await Translations.findById(id);
     if (!findTranslation) {
-      return res.json('Translation not found');
+      return res.json("Translation not found");
     }
     findTranslation[lang] = translation;
     await findTranslation.save();
     return findTranslation;
   } catch (err) {
-    return res.json(err)
+    return res.json(err);
   }
-}
+};
