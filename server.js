@@ -39,4 +39,4 @@ cron.schedule(
 
 app.use(routes);
 app.use("/uploads", express.static("uploads"));
-app.listen(process.env.PORT || 3001, () => console.log(`server is running ${PORT}`));
+app.listen(PORT, () => console.log(`server is running ${PORT}`));

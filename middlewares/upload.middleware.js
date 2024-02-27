@@ -23,7 +23,7 @@ const uploadFile = (req, res, next) => {
     } else if (err) {
       return res.status(500).json({ message: "Internal server error" });
     }
-    const { format = "jpg" } = req.query;
+    const { format = "webp" } = req.query;
     const files = [];
     const image = {};
     let convertedImageBuffer;
