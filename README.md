@@ -1,6 +1,6 @@
 ****Controllers****
 
-These functions are responsible for handling different user-related operations.
+**User Controllers**
 
 1. The `getMe` function:
 - Retrieves the `userId` from the request headers.
