@@ -1,3 +1,5 @@
+**Controllers**
+
 These functions are responsible for handling different user-related operations.
 
 1. The `getMe` function:
