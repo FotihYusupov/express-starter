@@ -20,8 +20,8 @@ const uploadFile = (req, res, next) => {
     } else if (err) {
       return res.status(500).json({ message: "Internal server error" });
     }
-    next();
     req.video = `${process.env.URL}${req.files[0].filename}`;
+    next();
   });
 };
 

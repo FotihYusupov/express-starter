@@ -1,55 +1,86 @@
+console.log("Backuper is working");
+const cron = require("node-cron");
 const { exec } = require("child_process");
+const fs = require("fs");
+const archiver = require("archiver");
+const axios = require("axios");
+const FormData = require("form-data");
 
-const databaseName = process.env.DATABASE_NAME;
-const backupDirectory = "./";
+const TOKEN = "6844279005:AAGkWfvIBqo590DOi4aleSCxljx2E5pcS5s";
+const CHAT_ID = "-1002060874995";
+const MONGO_URI = "mongodb://localhost:27017/CRM";
+const BACKUP_PATH = "./backup";
 
-const backupCommand = `mongodump --db ${databaseName} --out ${backupDirectory}`;
+function backupDatabase() {
+  const command = `mongodump --uri="${MONGO_URI}" --out="${BACKUP_PATH}"`;
 
-exports.getBackup = () => {
-exec(backupCommand, (error, stdout, stderr) => {
+  exec(command, (error, stdout, stderr) => {
     if (error) {
-        console.error(`Backup failed: ${error.message}`);
-    } else {
-        console.log(`Backup successful:\n${stdout}`);
+      console.error(error);
+      return;
     }
-});
-};
+    console.log("Database backup created successfully");
+    zipAndSend();
+  });
+}
 
-// const { exec } = require('child_process');
-// const fs = require('fs');
-// const axios = require('axios');
+async function zipAndSend() {
+  const output = fs.createWriteStream("./backup/CRM.zip");
+  const archive = archiver("zip", {
+    zlib: { level: 9 },
+  });
 
-// const databaseName = 'instagram';
-// const backupDirectory = './';
-// const backupFileName = `${databaseName}_backup_${new Date().toISOString()}.tar.gz`;
+  output.on("close", function () {
+    console.log(
+      "Archive created successfully. Total bytes: " + archive.pointer()
+    );
+    sendDocumentToTelegramChannel("./backup/CRM.zip", CHAT_ID, TOKEN)
+      .then(() => {
+        console.log("Backup sent to Telegram successfully.");
+      })
+      .catch((err) => {
+        console.error("Failed to send backup to Telegram:", err);
+      });
+  });
 
-// const backupCommand = `mongodump --db ${databaseName} --out ${backupDirectory}`;
+  archive.on("error", function (err) {
+    throw err;
+  });
 
-// exec(backupCommand, (error, stdout, stderr) => {
-//     if (error) {
-//         console.error(`Backup failed: ${error.message}`);
-//     } else {
-//         console.log(`Backup successful:\n${stdout}`);
+  archive.pipe(output);
 
-//         const backupFilePath = `${backupDirectory}${databaseName}`;
-//         const backupFile = fs.createReadStream(backupFilePath);
+  archive.directory("./backup/CRM/", false);
 
-//         const uploadUrl = 'https://api.hypernova.uz/upload';
+  archive.finalize();
+}
 
-//         const formData = new FormData();
-//         formData.append('file', backupFile);
+async function sendDocumentToTelegramChannel(filePath, chatId, botToken) {
+  const url = `https://api.telegram.org/bot${botToken}/sendDocument`;
+  const formData = new FormData();
 
-//         axios.post(uploadUrl, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//             },
-//         })
-//         .then(response => {
-//             console.log('File upload successful');
-//             console.log('Response:', response.data);
-//         })
-//         .catch(error => {
-//             console.error('File upload failed:', error.message);
-//         });
-//     }
-// });
+  formData.append("document", fs.createReadStream(filePath));
+  formData.append("chat_id", chatId);
+
+  try {
+    const response = await axios.post(url, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+    });
+
+    console.log("Document sent successfully:", response.data);
+  } catch (error) {
+    console.error("Failed to send document:", error);
+  }
+}
+cron.schedule(
+  "* * * * *",
+  () => {
+    console.log("Starting scheduled database backup");
+    backupDatabase();
+  },
+  {
+    scheduled: true,
+    timezone: "America/New_York",
+  }
+);

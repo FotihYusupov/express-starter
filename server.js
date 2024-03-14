@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cron = require("node-cron");
 const routes = require("./routes/router");
-const { getBackup } = require("./backup");
+const getBackup = require("./backup");
 const video = require("./video");
 const PORT = process.env.PORT || 3001;
+const uploadMiddlewaer = require("./middlewares/upload.middleware")
 
 dotenv.config();
 const app = express();
@@ -19,23 +20,16 @@ mongoose
 
 app.use(cors());
 
-app.get("/", (req, res) => {
-  return res.json({ message: "Server is run!" });
+app.post("/", uploadMiddlewaer, (req, res) => {
+  return res.json(req.images);
 });
 
 app.get("/video/:video", video);
 
-cron.schedule(
-  "0 0 */24 * * *",
-  () => {
-    console.log("Running backup job...");
-    getBackup();
-  },
-  {
-    scheduled: true,
-    timezone: "Asia/Tashkent",
-  }
-);
+// cron.schedule("* * * * *", () => {
+//   console.log("Running backup...");
+//   getBackup();
+// });
 
 app.use(routes);
 app.use("/uploads", express.static("uploads"));
