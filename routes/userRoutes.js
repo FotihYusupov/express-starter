@@ -5,5 +5,6 @@ const userRoutes = Router();
 
 userRoutes.get("/get-me", authMiddleware, userController.getMe);
 userRoutes.post("/login", userController.login);
+userRoutes.put("/update-user", authMiddleware, userController.updateUser);
 
 module.exports = userRoutes;
