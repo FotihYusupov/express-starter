@@ -2,12 +2,12 @@ const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const cron = require("node-cron");
 const routes = require("./routes/router");
-const getBackup = require("./backup");
+const fs = require("fs");
+const path = require("path");
+require("./backup");
 const video = require("./video");
 const PORT = process.env.PORT || 3001;
-const uploadMiddlewaer = require("./middlewares/upload.middleware")
 
 dotenv.config();
 const app = express();
@@ -20,16 +20,33 @@ mongoose
 
 app.use(cors());
 
-app.post("/", uploadMiddlewaer, (req, res) => {
-  return res.json(req.images);
+app.post("/", (req, res) => {
+  return res.json({ message: "Server is run!" });
 });
 
 app.get("/video/:video", video);
 
-// cron.schedule("* * * * *", () => {
-//   console.log("Running backup...");
-//   getBackup();
-// });
+const logFolder = path.join(__dirname, "log");
+const logFileName = () => {
+  const now = new Date();
+  const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${now.getFullYear()}`;
+  return path.join(logFolder, `${formattedDate}.mongodb.log`);
+};
+fs.mkdirSync(logFolder, { recursive: true });
+let logStream = fs.createWriteStream(logFileName(), { flags: "a" });
+mongoose.set("debug", (collectionName, method, query, doc) => {
+  const logMessage = `[${new Date().toISOString()}] ${collectionName}.${method} ${JSON.stringify(
+    query
+  )} ${JSON.stringify(doc)}\n`;
+  if (logStream.path !== logFileName()) {
+    logStream.end();
+    logStream = fs.createWriteStream(logFileName(), { flags: "a" });
+  }
+
+  logStream.write(logMessage);
+});
 
 app.use(routes);
 app.use("/uploads", express.static("uploads"));

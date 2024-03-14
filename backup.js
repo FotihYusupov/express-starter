@@ -6,10 +6,11 @@ const archiver = require("archiver");
 const axios = require("axios");
 const FormData = require("form-data");
 
-const TOKEN = "6844279005:AAGkWfvIBqo590DOi4aleSCxljx2E5pcS5s";
-const CHAT_ID = "-1002060874995";
-const MONGO_URI = "mongodb://localhost:27017/CRM";
+const TOKEN = process.env.TELEGRAM_TOKEN;
+const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const MONGO_URI = process.env.MONGO_URL;
 const BACKUP_PATH = "./backup";
+const databaseName = process.env.DATABASE_NAME
 
 function backupDatabase() {
   const command = `mongodump --uri="${MONGO_URI}" --out="${BACKUP_PATH}"`;
@@ -25,7 +26,7 @@ function backupDatabase() {
 }
 
 async function zipAndSend() {
-  const output = fs.createWriteStream("./backup/CRM.zip");
+  const output = fs.createWriteStream(`./backup/${databaseName}.zip`);
   const archive = archiver("zip", {
     zlib: { level: 9 },
   });
@@ -34,7 +35,7 @@ async function zipAndSend() {
     console.log(
       "Archive created successfully. Total bytes: " + archive.pointer()
     );
-    sendDocumentToTelegramChannel("./backup/CRM.zip", CHAT_ID, TOKEN)
+    sendDocumentToTelegramChannel(`./backup/${databaseName}.zip`, CHAT_ID, TOKEN)
       .then(() => {
         console.log("Backup sent to Telegram successfully.");
       })
@@ -49,7 +50,7 @@ async function zipAndSend() {
 
   archive.pipe(output);
 
-  archive.directory("./backup/CRM/", false);
+  archive.directory(`./backup/${databaseName}/`, false);
 
   archive.finalize();
 }
