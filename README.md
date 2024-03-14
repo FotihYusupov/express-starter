@@ -1,4 +1,4 @@
-**Controllers**
+****Controllers****
 
 These functions are responsible for handling different user-related operations.
 
@@ -19,7 +19,7 @@ These functions are responsible for handling different user-related operations.
 - If the user is updated successfully, it returns a JSON response with a message "User updated" and the updated user data.
 - If the user is not found, it returns a JSON response with a 404 status and a message "User not found!"
 
-Translation Controllers
+**Translation Controllers**
 
 1. **getAll**: This function retrieves all translations from the database and returns them in a JSON response. It maps each translation object to include specific language translations (uz, ru, en, kr) or null if the translation does not exist in that language.
 
