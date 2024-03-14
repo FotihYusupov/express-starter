@@ -1,4 +1,4 @@
-The given code is a Node.js module that exports three functions: `getMe`, `login`, and `updateUser`. These functions are responsible for handling different user-related operations.
+These functions are responsible for handling different user-related operations.
 
 1. The `getMe` function:
 - Retrieves the `userId` from the request headers.
