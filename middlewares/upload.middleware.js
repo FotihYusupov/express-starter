@@ -35,6 +35,10 @@ const uploadFile = (req, res, next) => {
           case "jpeg":
             const filenameJPEG = `${Date.now()}_${i}.jpeg`;
             convertedImageBuffer = await sharp(req.files[i].path)
+              .resize(1200, 1000, {
+                fit: sharp.fit.inside,
+                withoutEnlargement: true,
+              })
               .jpeg()
               .toBuffer();
             fs.writeFileSync(`${outputPath}${filenameJPEG}`, convertedImageBuffer);
@@ -65,6 +69,10 @@ const uploadFile = (req, res, next) => {
           case "png":
             const filenamePNG = `${Date.now()}_${i}.png`;
             convertedImageBuffer = await sharp(req.files[i].path)
+              .resize(1200, 1000, {
+                fit: sharp.fit.inside,
+                withoutEnlargement: true,
+              })
               .png()
               .toBuffer();
             fs.writeFileSync(`${outputPath}${filenamePNG}`, convertedImageBuffer);
@@ -95,6 +103,10 @@ const uploadFile = (req, res, next) => {
           case "webp":
             const filenameWEBP = `${Date.now()}_${i}.webp`;
             convertedImageBuffer = await sharp(req.files[i].path)
+              .resize(1200, 1000, {
+                fit: sharp.fit.inside,
+                withoutEnlargement: true,
+              })
               .webp()
               .toBuffer();
             fs.writeFileSync(`${outputPath}${filenameWEBP}`, convertedImageBuffer);
